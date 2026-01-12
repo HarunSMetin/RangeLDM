@@ -69,6 +69,7 @@
     "SEMANTICKITTI_DATASET": "/datasets/SemanticKITTI",
     "KITTI360_DATASET": "/datasets/KITTI360",
     "NUSCENES_DATASET": "/datasets/nuscenes",
+    "RANGELDM_CACHE": "/workspace/cache/rangeldm",
     "TORCH_HOME": "/workspace/cache/torch",
     "HF_HOME": "/workspace/cache/huggingface"
   },

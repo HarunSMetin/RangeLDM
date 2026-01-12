@@ -4,7 +4,8 @@ from diffusers import DDPMScheduler, UNet2DModel
 from kitti360_range_image_vanilla import KITTIRangeVanillaLoader
 from kitti360_range_image import KITTIRangeLoader
 from nuscenes_range_image import nuScenesRangeLoader
-from Waymo_range_image import WaymoRangeLoader
+# from Waymo_range_image import WaymoRangeLoader
+from semantickitti_range_image import SemanticKITTIRangeLoader
 import torch
 import numpy as np
 # import open3d as o3d
@@ -56,7 +57,12 @@ args = parse_args()
 distributed_state = PartialState()
 
 batch_size = args.eval_batch_size
-if hasattr(args, 'nuscenes') and args.nuscenes:
+if hasattr(args, 'semantickitti') and args.semantickitti:
+    loader = SemanticKITTIRangeLoader(os.environ.get('SEMANTICKITTI_DATASET'), 
+                                        batch_size=batch_size, 
+                                        num_workers=6, 
+                                        )
+elif hasattr(args, 'nuscenes') and args.nuscenes:
     loader = nuScenesRangeLoader(os.environ.get('NUSCENES_DATASET'), 
                                         batch_size=batch_size, 
                                         num_workers=6, 

@@ -12,6 +12,7 @@ import accelerate
 from convert_vae import convert_vae_to_diffusers
 import datasets
 from nuscenes_range_image import nuScenesRangeLoader
+from semantickitti_range_image import SemanticKITTIRangeLoader
 from kitti360_range_image import KITTIRangeLoader
 from STF_range_image import STFRangeLoader
 from kitti360_range_image_vanilla import KITTIRangeVanillaLoader
@@ -289,6 +290,13 @@ def main(args):
         )
         
 
+    # Optional memory optimization: gradient checkpointing (ignore if unsupported)
+    if hasattr(args, 'gradient_checkpointing') and args.gradient_checkpointing:
+        try:
+            model.enable_gradient_checkpointing()
+        except (AttributeError, ValueError):
+            pass
+
     if hasattr(args, 'all_circonv') and args.all_circonv:
         replace_down(model)
         replace_conv(model)
@@ -369,6 +377,11 @@ def main(args):
 
     if hasattr(args, 'nuscenes') and args.nuscenes:
         loader = nuScenesRangeLoader(os.environ.get('NUSCENES_DATASET'), 
+                                        batch_size=args.train_batch_size, 
+                                        num_workers=args.dataloader_num_workers, 
+                                        )
+    elif hasattr(args, 'semantickitti') and args.semantickitti:
+        loader = SemanticKITTIRangeLoader(os.environ.get('SEMANTICKITTI_DATASET'), 
                                         batch_size=args.train_batch_size, 
                                         num_workers=args.dataloader_num_workers, 
                                         )

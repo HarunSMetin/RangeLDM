@@ -1,0 +1,59 @@
+output_dir: null
+train_batch_size: 32
+num_epochs: 1000
+gradient_accumulation_steps: 1
+use_ema: True
+learning_rate: 1e-4
+lr_warmup_steps: 500
+save_images_epochs: 1
+ddim: True
+ddpm_num_inference_steps: 50
+with_vae: True
+vae_config: ../vae/configs/kitti360.yaml
+vae_checkpoint: path_to_vae_checkpoint_ckpt_file
+block_out_channels: [128, 128, 256, 256]
+pos_encoding: True
+all_circonv: True
+semantickitti: True
+# Range normalization defaults for HDL-64E
+range_mean: 20.
+range_std: 40.
+model_config:
+  sample_size: [256, 16]
+  in_channels: 5
+  out_channels: 4
+  layers_per_block: 2
+  block_out_channels: [128, 128, 256, 256]
+  down_block_types: ["DownBlock2D", "AttnDownBlock2D", "AttnDownBlock2D", "AttnDownBlock2D"]
+  up_block_types: ["AttnUpBlock2D", "AttnUpBlock2D", "AttnUpBlock2D", "UpBlock2D"]
+
+# default parameters
+model_config_name_or_path: null
+resolution: [1024, 64]
+eval_batch_size: 16
+dataloader_num_workers: 8
+save_model_epochs: 10
+lr_scheduler: cosine
+adam_beta1: 0.95
+adam_beta2: 0.999
+adam_weight_decay: 1e-6
+adam_epsilon: 1e-08
+ema_inv_gamma: 1.0
+ema_power: 0.75
+ema_max_decay: 0.9999
+push_to_hub: False
+hub_token: null
+hub_model_id: null
+hub_private_repo: False
+logger: tensorboard
+logging_dir: logs
+local_rank: -1
+mixed_precision: 'no'
+prediction_type: epsilon
+ddpm_num_steps: 1000
+ddpm_beta_schedule: linear
+checkpointing_steps: 500
+checkpoints_total_limit: 10
+resume_from_checkpoint: null
+enable_xformers_memory_efficient_attention: False
+snr_gamma: null

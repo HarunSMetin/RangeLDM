@@ -4,6 +4,7 @@ from diffusers import DDPMScheduler, UNet2DModel
 from encoders import SparseRangeImageEncoder2
 from kitti360_range_image import KITTIRangeLoader
 from nuscenes_range_image import nuScenesRangeLoader
+from semantickitti_range_image import SemanticKITTIRangeLoader
 import torch
 import numpy as np
 # import open3d as o3d
@@ -62,6 +63,14 @@ if hasattr(args, 'nuscenes') and args.nuscenes:
                                 inpainting=args.inpainting,
                                 )
     range_limit = 90.0
+elif hasattr(args, 'semantickitti') and args.semantickitti:
+    loader = SemanticKITTIRangeLoader(os.environ.get('SEMANTICKITTI_DATASET'),
+                                batch_size=batch_size,
+                                num_workers=6,
+                                downsample=args.upsample,
+                                inpainting=args.inpainting,
+                                )
+    range_limit = 80.0
 else:
     loader = KITTIRangeLoader(os.environ.get('KITTI360_DATASET'), 
                                 batch_size=batch_size, 

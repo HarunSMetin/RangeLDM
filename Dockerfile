@@ -10,7 +10,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONPATH=/workspace/RangeLDM:/workspace/RangeLDM/ldm:/workspace/RangeLDM/vae:$PYTHONPATH \
     CUDA_HOME=/usr/local/cuda \
     PATH=/usr/local/cuda/bin:$PATH \
-    LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH \
+    RANGELDM_CACHE=/workspace/cache/rangeldm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -110,6 +111,7 @@ RUN mkdir -p \
     /workspace/outputs \
     /workspace/checkpoints \
     /workspace/cache \
+    /workspace/cache/rangeldm \
     /workspace/cache/torch \
     /workspace/cache/huggingface \
     /workspace/datasets \
