@@ -1,0 +1,88 @@
+{
+  "name": "RangeLDM Development Container",
+  "dockerFile": "../Dockerfile",
+ 
+
+  // Container user configuration
+  "remoteUser": "root",
+  
+  // Mount points
+  "mounts": [
+    // Workspace code (read-write)
+    "source=${localWorkspaceFolder},target=/workspace/RangeLDM,type=bind,consistency=cached",
+    
+    // SemanticKITTI dataset (read-only for safety)
+    "source=/home/kx9279/Repos/container-3d-diffusion-lidar-super-resolution/lidiff/Datasets/SemanticKITTI,target=/datasets/SemanticKITTI,type=bind,consistency=cached,readonly",
+    
+    // Outputs directory (on host for easy access)
+    "source=${localWorkspaceFolder}/outputs,target=/workspace/outputs,type=bind,consistency=cached",
+    
+    // Checkpoints directory (on host for persistence)
+    "source=${localWorkspaceFolder}/checkpoints,target=/workspace/checkpoints,type=bind,consistency=cached",
+    
+    // Cache volume for preprocessed range images (Docker volume for performance)
+    "source=rangeldm-cache,target=/workspace/cache,type=volume",
+    
+    // Optional: Additional datasets volume
+    "source=rangeldm-datasets,target=/workspace/datasets,type=volume"
+  ],
+
+  // GPU support (requires NVIDIA Docker runtime)
+  "runArgs": [
+    "--gpus=all",
+    "--ipc=host",
+    "--shm-size=16gb",
+    "--ulimit", "memlock=-1",
+    "--ulimit", "stack=67108864"
+  ],
+
+  // Forward ports
+  "forwardPorts": [8888, 6006],
+  "portsAttributes": {
+    "8888": {
+      "label": "Jupyter",
+      "onAutoForward": "notify"
+    },
+    "6006": {
+      "label": "TensorBoard",
+      "onAutoForward": "notify"
+    }
+  },
+
+  // Post-create command to run after container is created
+  "postCreateCommand": "echo 'RangeLDM Development Container Ready!' && python --version && nvidia-smi",
+
+  // Features to add to the container
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+
+  // Environment variables
+  "containerEnv": {
+    "PYTHONPATH": "/workspace/RangeLDM:/workspace/RangeLDM/ldm:/workspace/RangeLDM/vae:${PYTHONPATH}",
+    "CUDA_VISIBLE_DEVICES": "0",
+    "SEMANTICKITTI_DATASET": "/datasets/SemanticKITTI",
+    "KITTI360_DATASET": "/datasets/KITTI360",
+    "NUSCENES_DATASET": "/datasets/nuscenes",
+    "TORCH_HOME": "/workspace/cache/torch",
+    "HF_HOME": "/workspace/cache/huggingface"
+  },
+
+  // Workspace folder inside container
+  "workspaceFolder": "/workspace/RangeLDM",
+
+  // Lifecycle scripts
+  "initializeCommand": "mkdir -p ${localWorkspaceFolder}/outputs ${localWorkspaceFolder}/checkpoints && echo 'Initializing RangeLDM development environment...'",
+  "onCreateCommand": "echo 'Container created successfully!'",
+  
+  // Update remote user UID/GID to match local user (optional, comment out if not needed)
+  // "updateRemoteUserUID": true,
+
+  // Configure shutdown action
+  "shutdownAction": "stopContainer"
+}
